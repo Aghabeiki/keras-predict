@@ -1,6 +1,6 @@
 {
   "name": "keras-predict",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A nodejs Native addons to run Keras ML model.",
   "repository": {
     "type": "git",

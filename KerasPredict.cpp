@@ -1,6 +1,9 @@
 #include <napi.h>
 #include <fdeep/fdeep.hpp>
-
+inline void disable_loging(const std::string& str)
+{
+    // std::cout << str << std::flush;
+}
 class ErrorAsyncWorker : public Napi::AsyncWorker
 {
   public:
@@ -52,7 +55,7 @@ class PredicateAsyncWorker : public Napi::AsyncWorker
   protected:
     void Execute() override
     {
-        const auto model = fdeep::load_model(this->mlModelPath);
+        const auto model = fdeep::load_model(this->mlModelPath,true, disable_loging, static_cast<fdeep::float_type>(0.00001));
         this->results = new double[this->testCaseCount];
         fdeep::shape3 tensor3_shape(this->footPrintSize, 1, 1);
         for (int x = 0; x < this->testCaseCount; ++x)
