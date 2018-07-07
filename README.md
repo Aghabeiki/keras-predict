@@ -3,7 +3,7 @@ A Nodejs Native addons to run Keras ML model.
 
  Run Keras ML model via [frugally-deep](https://github.com/Dobiasd/frugally-deep) as a native Nodejs Addons.
  
- usage: 
+ Usage: 
  * first [install](https://github.com/Dobiasd/frugally-deep/blob/master/INSTALL.md) frugally-deep.
  * compile your keras model :
  ```
@@ -26,5 +26,6 @@ predict.predict(120, mlModelPath, testCase, (err, predict) => {
  ```
  
  * A working example avialable at example folder.
+ * This module tested only on ArchLinux.
 
 Amin Aghabeiki.
