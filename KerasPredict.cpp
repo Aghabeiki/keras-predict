@@ -56,7 +56,7 @@ class PredicateAsyncWorker : public Napi::AsyncWorker
     void Execute() override
     {
         const auto model = fdeep::load_model(this->mlModelPath,true, disable_loging, static_cast<fdeep::float_type>(0.00001));
-        this->results = new double[this->testCaseCount];
+        this->results = new double*[this->testCaseCount];
         fdeep::shape3 tensor3_shape(this->footPrintSize, 1, 1);
         for (int x = 0; x < this->testCaseCount; ++x)
         {
@@ -66,8 +66,13 @@ class PredicateAsyncWorker : public Napi::AsyncWorker
                 t.set(y, 1, 1, this->testCases[x][y]);
             }
             const auto result = model.predict({t});
-            fdeep::internal::tensor3_pos pos = fdeep::internal::tensor3_pos(0, 0, 0);
-            this->results[x] = result[0].get(pos);
+            this->outputSize=  result.front().shape().depth_;
+            this->results[x] = new double[this->outputSize];
+            for(int i =0;i<this->outputSize;i++){
+                fdeep::internal::tensor3_pos pos = fdeep::internal::tensor3_pos(i, 0, 0);
+                this->results[x][i] = (double)result[0].get(pos);
+            }
+            
         }
     }
 
@@ -75,10 +80,13 @@ class PredicateAsyncWorker : public Napi::AsyncWorker
     {
         Napi::Env env = Env();
         Napi::Array res = Napi::Array::New(env, this->testCaseCount);
-        Napi::Number tmp;
-        for (int i = 0; i < this->testCaseCount; i++)
-        {
-            res[i] = Napi::Number::New(env, this->results[i]);
+        for (int i = 0; i < this->testCaseCount; i++){
+            Napi::Array tmp = Napi::Array::New(env, this->outputSize);
+            for(int j=0;j<this->outputSize;j++){
+                tmp[j]=Napi::Number::New(env, this->results[i][j]);
+            }
+            delete this->results[i];
+            res[i]=tmp;
         }
         Callback().MakeCallback(
             Receiver().Value(), {env.Null(), res});
@@ -94,10 +102,11 @@ class PredicateAsyncWorker : public Napi::AsyncWorker
 
   private:
     int footPrintSize;
+    int outputSize;
     std::string mlModelPath;
     int **testCases;
     int testCaseCount;
-    double *results;
+    double **results;
 };
 
 void PredictAsyncCallback(const Napi::CallbackInfo &info)
