@@ -1,6 +1,6 @@
 {
   "name": "keras-predict",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A nodejs Native addons to run Keras ML model.",
   "repository": {
     "type": "git",
@@ -28,6 +28,8 @@
     "node": ">=8.6.0"
   },
   "scripts": {
+    "preinstall": "npm install node-pre-gyp node-addon-api",
+    "install": "node-pre-gyp install --fallback-to-build",
     "start": "node example/mytest.js",
     "build:dev": "node-gyp -j 16 build --debug",
     "build": "node-gyp -j 16 build",
@@ -36,12 +38,11 @@
     "clean": "node-gyp clean"
   },
   "dependencies": {
-    "bindings": "^1.3.0"
+    "bindings": "^1.3.0",
+    "node-addon-api": "^1.6.0",
+    "node-pre-gyp": "^0.11.0"
   },
-  "devDependencies": {
-    "aws-sdk": "^2.353.0",
-    "node-addon-api": "^1.6.0"
-  },
+  "devDependencies": {},
   "binary": {
     "module_name": "predicator",
     "module_path": "build/Release/",
